@@ -125,6 +125,14 @@ select {
   cursor: pointer;
 }
 
+/* The opened dropdown list is rendered by the OS/browser, not by our page
+styles, and falls back to a white popup background — so the options need
+their own dark text regardless of the select's own light-on-dark color. */
+select option {
+  color: #0b0b0c;
+  background: #ffffff;
+}
+
 .chevron {
   position: absolute;
   right: 0;
