@@ -6,6 +6,40 @@ links pulled from Apple's iTunes catalog.
 
 ![Playlist generator, showing the hero section and a generated Amapiano playlist](docs/screenshot.png)
 
+## Features
+
+- Pick a genre from 8 options and generate a five-track AI playlist in one click.
+- Real 30-second previews, album artwork, and Apple Music links per track, matched live
+  against Apple's iTunes catalog.
+- One shared audio player — only one track plays at a time, switching stops the previous
+  one — plus a "Play all" button that queues the whole playlist in sequence.
+- Never hard-fails: a bad or unreachable model response retries once, then falls back to
+  a curated, real playlist for that genre, and says so honestly in the UI (`source:
+  "fallback"`) rather than passing it off as model output.
+- Dark, editorial playlist interface: a connected genre/generate control, an ambient
+  background glow, a magnetic hover effect on the primary action, an animated generation
+  visualizer while waiting, and a staggered reveal transition once the playlist lands.
+- Keyboard accessible throughout: visible focus states, proper labels and `aria-live`
+  regions, preview buttons that aren't focusable when no preview exists, and full
+  `prefers-reduced-motion` support.
+- Responsive down to small mobile widths.
+
+## Tech stack
+
+**Backend** — Python 3.11+, FastAPI, Uvicorn, Pydantic v2 + pydantic-settings, httpx for
+async calls to both OpenAI and the iTunes Search API, pytest + pytest-asyncio (offline,
+no network access in the suite).
+
+**Frontend** — Vue 3 (Composition API, `<script setup>`) + Vite, plain CSS with custom
+properties. No CSS framework and no animation library — the ambient background, magnetic
+hover, and generation visualizer are hand-rolled with Vue and CSS, not a component kit.
+
+**Model provider** — OpenAI's chat completions API in JSON mode, behind a swappable
+`TextGenerator` interface (see Architecture decisions below).
+
+**Catalog** — Apple's iTunes Search API for previews, artwork, and store links. No API
+key or registration required.
+
 ## Project structure
 
 ```
@@ -18,8 +52,10 @@ gridiron-playlist/
 │   └── tests/          pytest suite, no network access
 ├── frontend/            Vue 3 + Vite single-page app
 │   └── src/
-│       ├── components/  Presentational components (bits/ is vendored, do not edit)
-│       ├── composables/ Playlist state and audio-preview playback
+│       ├── components/  Presentational components (visual/ holds the hand-rolled
+│       │                ambient background and generation-visualizer effects)
+│       ├── composables/ Playlist state, audio-preview playback, magnetic hover,
+│       │                reduced-motion detection
 │       ├── services/    The only place `fetch` is called
 │       └── styles/      Design tokens and base styles
 ├── start.sh             Runs both halves locally
@@ -56,7 +92,7 @@ Fill in `.env`:
 | `MODEL_NAME` | Required — no default is provided. Set it to a current OpenAI model. |
 | `ENABLE_ENRICHMENT` | `true` to fetch previews/artwork/store links from iTunes. |
 | `USE_STUB_PROVIDER` | `true` to skip OpenAI entirely and run offline, for demos or tests. |
-| `ALLOWED_ORIGINS` | Comma-separated origins allowed to call the API. |
+| `ALLOWED_ORIGINS` | Comma-separated origins allowed to call the API. Must match the browser's `Origin` header exactly — no trailing slash. |
 | `REQUEST_TIMEOUT` | Seconds to wait on the provider before giving up. |
 
 ## Running locally
@@ -171,5 +207,5 @@ Render instance warm.
 
 ## Credits
 
-Animated components in `frontend/src/components/bits/` are vendored from
-[Vue Bits](https://vue-bits.dev) (MIT licensed).
+Album artwork, previews, and store links are served directly from Apple's iTunes
+catalog — nothing is downloaded, cached, or re-hosted.
