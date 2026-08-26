@@ -1,0 +1,20 @@
+:root {
+  --ink: #0b0b0c;
+  --ink-2: #16161a;
+  --beige: #e7dfd1;
+  --beige-dim: #c9bfac;
+  --burgundy: #7a1f2b;
+  --burgundy-lt: #9b2f3d;
+  --teal: #1e6e78;
+  --teal-lt: #2f97a4;
+
+  --font-display: 'Fraunces', ui-serif, Georgia, serif;
+  --font-body: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', monospace;
+
+  --step-0: 1rem;
+  --step-1: 1.25rem;
+  --step-2: 1.6rem;
+  --step-3: 2.5rem;
+  --step-4: 4rem;
+}
